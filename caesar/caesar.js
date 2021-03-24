@@ -60,17 +60,35 @@ function leaveMeBe (unicodeOfOldMessageCharacter) {
 
 }
 
-function wrapUnicode (newUnicodeOfOldMessageCharacter, offset) {
-
+function wrapUnicode (newUnicodeOfOldMessageCharacter, offset, unicodeOfOldMessageCharacter) {
+    // smaller than uppercase A?
     if (newUnicodeOfOldMessageCharacter < 65) {
         return newUnicodeOfOldMessageCharacter + 26;
-    } else if (newUnicodeOfOldMessageCharacter > 122) {
+    }
+    // bigger than lowercase z?
+    if (newUnicodeOfOldMessageCharacter > 122) {
         return newUnicodeOfOldMessageCharacter - 26;
-    } else if (newUnicodeOfOldMessageCharacter > 90 && newUnicodeOfOldMessageCharacter < 97) {
+    }
+    // character between uppercase Z & lowercase a?
+    if (newUnicodeOfOldMessageCharacter > 90 && newUnicodeOfOldMessageCharacter < 97) {
         if ((newUnicodeOfOldMessageCharacter - offset) > 90) {
             return newUnicodeOfOldMessageCharacter + 26;
-        } return newUnicodeOfOldMessageCharacter - 26;
+        }
+        return newUnicodeOfOldMessageCharacter - 26;
     }
+    // start in uppercase section but end up outside uppercase section?
+    if (unicodeOfOldMessageCharacter > 72 && unicodeOfOldMessageCharacter < 90) {
+        if ((unicodeOfOldMessageCharacter + offset) > 90) {
+            return newUnicodeOfOldMessageCharacter - 26;
+        }
+    }
+    // start in lowercase section but end up outside lowercase section?
+    if (unicodeOfOldMessageCharacter > 97 && unicodeOfOldMessageCharacter < 115) {
+        if ((unicodeOfOldMessageCharacter + offset) < 97) {
+            return newUnicodeOfOldMessageCharacter + 26;
+        }
+    }
+
     return newUnicodeOfOldMessageCharacter;
 }
 
@@ -83,7 +101,7 @@ function caesar(oldMessage, rawOffset) {
         let newUnicodeOfOldMessageCharacter = getNewUnicodeOf(unicodeOfOldMessageCharacter, offset);
         let wrappedUnicodeOfOldMessageCharacter = leaveMeBe(unicodeOfOldMessageCharacter)
             ? newUnicodeOfOldMessageCharacter
-            : wrapUnicode(newUnicodeOfOldMessageCharacter, offset);
+            : wrapUnicode(newUnicodeOfOldMessageCharacter, offset, unicodeOfOldMessageCharacter);
         let newMessageCharacter = String.fromCharCode(wrappedUnicodeOfOldMessageCharacter);
 
         newMessage = newMessage + newMessageCharacter;
